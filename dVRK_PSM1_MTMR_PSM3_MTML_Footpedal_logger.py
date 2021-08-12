@@ -35,6 +35,8 @@ if __name__ == '__main__':
 	MTMR = mtm.robot('MTMR')
 	footpedal = footpedals.footpedal('footpedals')
 	ECM = arm_1_7.robot('ECM')
+	left_cam = camera.camera('left')
+	right_cam = camera.camera('right')
 
 	input("		Press Enter to start logging...")
 
@@ -179,7 +181,8 @@ if __name__ == '__main__':
 	worksheet.write(0, 101, 'Focus Out Pressed')
 	worksheet.write(0, 102, 'Coag State')
 
-
+	worksheet.write(0, 103, 'Left Camera Image')
+	worksheet.write(0, 104, 'Right Camera Image')
 
 
 	i = 0
@@ -269,6 +272,16 @@ if __name__ == '__main__':
 
 			for col in range(len(all_data)):
 				worksheet.write(i, col, all_data[col])
+				
+			image_saved_left = left_cam.save_image()
+
+			if image_saved_left == True:
+				worksheet.write(i, 105, "left"+"_Camera" +"_" + str(i)+".png")
+
+			image_saved_right = right_cam.save_image()
+
+			if image_saved_right == True:
+				worksheet.write(i, 106, "right"+"_Camera" +"_" + str(i)+".png")
 
 		else:
 			start_time = time
