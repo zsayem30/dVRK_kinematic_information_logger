@@ -33,6 +33,7 @@ class footpedal:
 		rospy.Subscriber(full_ros_namespace + '/coag', Joy, self.current_coag_state_callback, queue_size = 1, buff_size = 1000000)
 		rospy.Subscriber(full_ros_namespace + '/headsensor1', Joy, self.current_headsensor_state_callback, queue_size = 1, buff_size = 1000000)
 		rospy.Subscriber(full_ros_namespace + '/cam_minus', Joy, self.current_cam_minus_state_callback, queue_size = 1, buff_size = 1000000)
+		rospy.Subscriber(full_ros_namespace + '/cam_plus', Joy, self.current_cam_plus_state_callback, queue_size = 1, buff_size = 1000000)
 
 	#callback
 
@@ -51,6 +52,9 @@ class footpedal:
 	def current_cam_minus_state_callback(self, data):
 		self.__cam_minus_pedal = data.buttons
 
+	def current_cam_plus_state_callback(self, data):
+		self.__cam_plus_pedal = data.buttons
+
 	#getters
 
 	def get_camera_state(self):
@@ -64,6 +68,9 @@ class footpedal:
 
 	def get_coag_state(self):
 		return self.__coag_pedal
+
+	def get_cam_plus_state(self):
+		return self.__cam_plus_pedal
 
 	def get_cam_minus_state(self):
 		return self.__cam_minus_pedal
