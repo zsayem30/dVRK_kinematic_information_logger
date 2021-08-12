@@ -18,7 +18,7 @@ import os
 class camera:
 
 
-	def __init__(self, camera_name, ros_namespace = '/stereo/'):
+	def __init__(self, camera_name, ros_namespace = '/dVRK/'):
 
 		self.__camera_name = camera_name
 		self.__ros_namespace = ros_namespace
@@ -28,7 +28,7 @@ class camera:
 		self.image_path = os.path.abspath(os.getcwd()) + '/Images/'
 
 
-		full_ros_namespace = self.__ros_namespace + self.__camera_name
+		full_ros_namespace = self.__ros_namespace + self.__camera_name + '/decklink/camera'
 
 		#subscriber
 		rospy.Subscriber(full_ros_namespace+ '/image_raw', Image, self.image_callback, queue_size = 1, buff_size = 1000000)
@@ -41,7 +41,7 @@ class camera:
 			print(e)
 
 	#saves the image in a folder.
-
+#/dVRK/left/decklink/camera/image_raw
 		#getters
 	def get_image(self):
 		return self.cv_image
@@ -54,4 +54,3 @@ class camera:
 			return True
 		else:
 			return False
-			
