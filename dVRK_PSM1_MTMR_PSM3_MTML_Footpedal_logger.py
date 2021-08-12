@@ -34,6 +34,7 @@ if __name__ == '__main__':
 	MTML = mtm.robot('MTML')
 	MTMR = mtm.robot('MTMR')
 	footpedal = footpedals.footpedal('footpedals')
+	ECM = arm_1_7.robot('ECM')
 
 	input("		Press Enter to start logging...")
 
@@ -148,12 +149,38 @@ if __name__ == '__main__':
 	worksheet.write(0, 79, 'MTML_Orientation_Matrix_[3,2]')
 	worksheet.write(0, 80, 'MTML_Orientation_Matrix_[3,3]')
 
+	#write the column headers for ECM
+	worksheet.write(0, 81, 'ECM_joint_1')
+	worksheet.write(0, 82, 'ECM_joint_2')
+	worksheet.write(0, 83, 'ECM_joint_3')
+	worksheet.write(0, 84, 'ECM_joint_4')
+
+	worksheet.write(0, 85, 'ECM_ee_x')
+	worksheet.write(0, 86, 'ECM_ee_y')
+	worksheet.write(0, 87, 'ECM_ee_z')
+
+	worksheet.write(0, 88, 'ECM_Orientation_Matrix_[1,1]')
+	worksheet.write(0, 89, 'ECM_Orientation_Matrix_[1,2]')
+	worksheet.write(0, 90, 'ECM_Orientation_Matrix_[1,3]')
+
+	worksheet.write(0, 91, 'ECM_Orientation_Matrix_[2,1]')
+	worksheet.write(0, 92, 'ECM_Orientation_Matrix_[2,2]')
+	worksheet.write(0, 93, 'ECM_Orientation_Matrix_[2,3]')
+
+	worksheet.write(0, 94, 'ECM_Orientation_Matrix_[3,1]')
+	worksheet.write(0, 95, 'ECM_Orientation_Matrix_[3,2]')
+	worksheet.write(0, 96, 'ECM_Orientation_Matrix_[3,3]')
+
 	#write the column headers for Footpedals
-	worksheet.write(0, 81, 'Headsensor State')
-	worksheet.write(0, 82, 'Clutch State')
-	worksheet.write(0, 83, 'Camera State')
-	worksheet.write(0, 84, 'Focus Out Pressed')
-	worksheet.write(0, 85, 'Coag State')
+	worksheet.write(0, 97, 'Headsensor State')
+	worksheet.write(0, 98, 'Clutch State')
+	worksheet.write(0, 99, 'Camera State')
+	worksheet.write(0, 100, 'Focus In Pressed')
+	worksheet.write(0, 101, 'Focus Out Pressed')
+	worksheet.write(0, 102, 'Coag State')
+
+
+
 
 	i = 0
 
@@ -210,17 +237,25 @@ if __name__ == '__main__':
 		MTML_Orientation_Matrix = MTML.get_current_orientation_matrix()
 		MTML_data = np.concatenate((MTML_jp, MTML_jaw_angle, MTML_ee, MTML_Orientation_Matrix), axis = 0)
 
+		#Get ECM data
+		ECM_jp = ECM.get_current_joint_position()
+		ECM_ee = ECM.get_current_cartesian_position()
+		ECM_Orientation_Matrix = ECM.get_current_orientation_matrix()
+
+		ECM_data = np.concatenate((ECM_jp, ECM_ee, ECM_Orientation_Matrix), axis = 0)
+
 		#Get footpedal data
 		Operator_present = footpedal.get_headsensor_state()
 		clutch_state = footpedal.get_clutch_state()
 		camera_state = footpedal.get_camera_state()
+		focus_in_state = footpedal.get_cam_plus_state()
 		focus_out_state = footpedal.get_cam_minus_state()
 		coag_state = footpedal.get_coag_state()
 
 
-		footpedal_data = np.concatenate((Operator_present, clutch_state, camera_state, focus_out_state, coag_state), axis = 0)
+		footpedal_data = np.concatenate((Operator_present, clutch_state, camera_state, focus_in_state, focus_out_state, coag_state), axis = 0)
 
-		all_data = np.concatenate((PSM1_data, MTMR_data, PSM3_data, MTML_data, footpedal_data), axis = 0)
+		all_data = np.concatenate((PSM1_data, MTMR_data, PSM3_data, MTML_data, ECM_data, footpedal_data), axis = 0)
 		
 		time = data.header.stamp.secs + data.header.stamp.nsecs*10**(-9)
 		epoch_time = time
