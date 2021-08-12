@@ -20,6 +20,7 @@ import camera
 import mtm
 import footpedals
 import time
+import json
 
 if sys.version_info.major < 3:
     input = raw_input
@@ -40,7 +41,7 @@ if __name__ == '__main__':
 
 	input("		Press Enter to start logging...")
 
-	workbook = xlsxwriter.Workbook('dvrk_kinematic_logger_replay_2.xlsx')
+	workbook = xlsxwriter.Workbook('dvrk_kinematic_logger_test.xlsx')
 	worksheet = workbook.add_worksheet()
 
 	#start from the first cell
@@ -189,8 +190,11 @@ if __name__ == '__main__':
 
 	start_time = 0
 
+	left_cam_array = []
+	right_cam_array = []
+
 	def callback_dummy(data):
-		global i, start_time
+		global i, start_time, left_cam_array, right_cam_array
 
 		#Get PSM1 data
 		PSM1_jp = PSM1.get_current_joint_position()
@@ -267,21 +271,22 @@ if __name__ == '__main__':
 			Sequence = i
 			time = time - start_time
 			info_frame = [epoch_time, time, Sequence]
-
 			all_data = np.concatenate((info_frame, all_data), axis = 0)
 
 			for col in range(len(all_data)):
 				worksheet.write(i, col, all_data[col])
-				
-			image_saved_left = left_cam.save_image()
 
-			if image_saved_left == True:
-				worksheet.write(i, 105, "left"+"_Camera" +"_" + str(i)+".png")
+			image_saved_left = left_cam.get_image()
 
-			image_saved_right = right_cam.save_image()
+			if len(image_saved_left) != 0:
+				left_cam_array.append(image_saved_left)
+				worksheet.write(i, 103, "left"+"_Camera" +"_" + str(i)+".png")
 
-			if image_saved_right == True:
-				worksheet.write(i, 106, "right"+"_Camera" +"_" + str(i)+".png")
+			image_saved_right = right_cam.get_image()
+
+			if len(image_saved_right) != 0:
+				right_cam_array.append(image_saved_right)
+				worksheet.write(i, 104, "right"+"_Camera" +"_" + str(i)+".png")
 
 		else:
 			start_time = time
@@ -293,6 +298,18 @@ if __name__ == '__main__':
 		rospy.spin()
 	except rospy.ROSInterruptException as e:
 		print("Error Running ROS." + e)
-		pass
+		pas
 
 	workbook.close()
+
+	print("Finished logging....Saving images...")
+
+	# time_start = time.time()
+
+	# for i in range(len(left_cam_array)):
+	# 	#cv2.imwrite(self.image_path + self.__camera_name+"/"+self.__camera_name+"_Camera" +"_" + str(self.image_count)+".png", self.cv_image)
+	# 	cv2.imwrite(os.path.abspath(os.getcwd()) + '/Images/left/left_Camera_' + str(i + 1) + ".png", left_cam_array[i])
+	# 	cv2.imwrite(os.path.abspath(os.getcwd()) + '/Images/right/right_Camera_' + str(i + 1) + ".png", right_cam_array[i])
+
+	# time_duration = time.time() - time_start
+	# print(time_duration)
