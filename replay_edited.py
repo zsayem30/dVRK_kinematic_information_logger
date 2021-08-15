@@ -16,6 +16,8 @@ df = pd.DataFrame(data)
 data_array = df.to_numpy()
 df_header = list(df.columns)
 
+
+
 time = data_array[:,1]
 
 psm1_joint_values = data_array[:, 3:9]
@@ -41,17 +43,26 @@ psm3.home()
 ecm.home()
 
 psm1_replayed_joint_values = np.empty([len(psm1_joint_values), len(psm1_joint_values[0,:])])
-psm1_replayed_jaw_values = np.empty()
+psm1_replayed_jaw_values = np.empty([len(psm1_jaw), 1])
 psm3_replayed_joint_values = np.empty([len(psm3_joint_values), len(psm3_joint_values[0,:])])
+psm1_replayed_jaw_values = np.empty([len(psm3_jaw), 1])
 ecm_replayed_joint_values = np.empty([len(ecm_joint_values), len(ecm_joint_values[0,:])])
 
 goal_start_psm1 = np.copy(psm1_joint_values[0])
 goal_start_psm3 = np.copy(psm3_joint_values[0])
 goal_start_ecm = np.copy(ecm_joint_values[0])
 
+goal_psm1_jaw = np.copy(psm1_jaw_values[0])
+goal_psm3_jaw = np.copy(psm3_jaw_values[0])
+
 print('Moving arms to initial starting position...')
+
 psm1.move_joint(goal_psm1, interpolate = False)
+psm1.move_jaw(goal_psm1_jaw, interpolate = False)
+
 psm3.move_joint(goal_psm3, interpolate = False)
+psm3.move_jaw(goal_psm3_jaw, interpolate = False)
+
 ecm.move_joint(goal_ecm, interpolate = False)
 
 rospy.sleep(2)
@@ -60,6 +71,8 @@ psm1_replayed_joint_values[0, :] = psm1.get_current_joint_position()
 psm3_replayed_joint_values[0, :] = psm3.get_current_joint_position()
 ecm_replayed_joint_values[0, :] = ecm.get_current_joint_position()
 
+psm1_replayed_jaw_values[0, :] = psm1.get_current_jaw_position()
+psm3_replayed_jaw_values[0, :] = psm3.get_current_jaw_position()
 
 print('Arm at starting position...Motion about to start...')
 
