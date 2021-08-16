@@ -84,13 +84,20 @@ for i in range(len(delay)):
 
 	psm1.move_joint(goal_psm1, interpolate = False)
 	psm1.move_jaw(goal_psm1_jaw, interpolate = False)
-	
+
 	psm3.move_joint(goal_psm3, interpolate = False)
+
 	psm3.move_jaw(goal_psm3_jaw, interpolate = False)
 	
 	ecm.move_joint(goal_ecm, interpolate = False)
 
 	rospy.sleep(delay[i])
+
+	while(LA.norm(goal_psm1 - psm1.get_current_joint_position()) > 0.016):
+	  wait = True
+
+	while(LA.norm(goal_psm3 - psm3.get_current_joint_position()) > 0.016):
+	  wait = True
 
 	psm1_replayed_joint_values[i + 1, :] = psm1.get_current_joint_position()
 	psm1_replayed_jaw_values[i + 1, :] = psm1.get_current_jaw_position()
