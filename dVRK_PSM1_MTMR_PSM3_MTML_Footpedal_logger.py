@@ -21,6 +21,7 @@ import mtm
 import footpedals
 import time
 import json
+from tkinter import Tk, filedialog
 
 if sys.version_info.major < 3:
     input = raw_input
@@ -39,9 +40,20 @@ if __name__ == '__main__':
 	left_cam = camera.camera('left')
 	right_cam = camera.camera('right')
 
+
+	root = Tk()
+	root.withdraw()
+	open_file = filedialog.askdirectory()
+
+	print('The path specified is ' + open_file)
+
+	filename = input("Enter name of the file: ")
+
+	path = open_file + '/' + filename + '.xlsx'
+
 	input("		Press Enter to start logging...")
 
-	workbook = xlsxwriter.Workbook('dvrk_kinematic_logger_test.xlsx')
+	workbook = xlsxwriter.Workbook(path)
 	worksheet = workbook.add_worksheet()
 
 	#start from the first cell
@@ -298,11 +310,13 @@ if __name__ == '__main__':
 		rospy.spin()
 	except rospy.ROSInterruptException as e:
 		print("Error Running ROS." + e)
-		pas
+		pass
 
 	workbook.close()
 
 	print("Finished logging....Saving images...")
+
+#Comment out this section if you want to save the images
 
 	# time_start = time.time()
 
