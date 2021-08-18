@@ -10,7 +10,7 @@ import PyKDL
 import pandas as pd
 from numpy import linalg as LA
 
-data = pd.read_excel(r'dvrk_kinematic_logger_final_test.xls')
+data = pd.read_excel(r'dvrk_kinematic_logger_kareem_test.xls')
 df = pd.DataFrame(data)
 
 data_array = df.to_numpy()
@@ -54,15 +54,15 @@ goal_psm3_jaw = np.copy(psm3_jaw[0])
 
 print('Moving arms to initial starting position...')
 
-psm1.move_joint(goal_start_psm1, interpolate = False)
-psm1.move_jaw(goal_psm1_jaw, interpolate = False)
+psm1.move_joint(goal_start_psm1, interpolate = True)
+psm1.move_jaw(goal_psm1_jaw, interpolate = True)
 
-psm3.move_joint(goal_start_psm3, interpolate = False)
-psm3.move_jaw(goal_psm3_jaw, interpolate = False)
+psm3.move_joint(goal_start_psm3, interpolate = True)
+psm3.move_jaw(goal_psm3_jaw, interpolate = True)
 
-ecm.move_joint(goal_start_ecm, interpolate = False)
+ecm.move_joint(goal_start_ecm, interpolate = True)
 
-rospy.sleep(2)
+rospy.sleep(5)
 
 psm1_replayed_joint_values[0, :] = psm1.get_current_joint_position()
 psm3_replayed_joint_values[0, :] = psm3.get_current_joint_position()
@@ -93,11 +93,11 @@ for i in range(len(delay)):
 
 	rospy.sleep(delay[i])
 
-	while(LA.norm(goal_psm1 - psm1.get_current_joint_position()) > 0.016):
-	  wait = True
+	# while(LA.norm(goal_psm1 - psm1.get_current_joint_position()) > 0.02):
+	# 	wait = True
 
-	while(LA.norm(goal_psm3 - psm3.get_current_joint_position()) > 0.016):
-	  wait = True
+	# while(LA.norm(goal_psm3 - psm3.get_current_joint_position()) > 0.02):
+	# 	wait = True
 
 	psm1_replayed_joint_values[i + 1, :] = psm1.get_current_joint_position()
 	psm1_replayed_jaw_values[i + 1, :] = psm1.get_current_jaw_position()
@@ -119,4 +119,3 @@ filepath = 'replayed_data_final.xlsx'
 replayed_joint_values_Df.to_excel(filepath, index = False)
 
 print(rospy.get_caller_id(), ' <- joint direct complete')
-
