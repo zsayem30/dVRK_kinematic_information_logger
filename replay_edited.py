@@ -9,8 +9,17 @@ import numpy as np
 import PyKDL
 import pandas as pd
 from numpy import linalg as LA
+from tkinter import Tk, filedialog
 
-data = pd.read_excel(r'dvrk_kinematic_logger_kareem_test.xls')
+if sys.version_info.major < 3:
+    input = raw_input
+
+
+root = Tk()
+root.withdraw()
+open_file = filedialog.askopenfilename()
+
+data = pd.read_excel(open_file)
 df = pd.DataFrame(data)
 
 data_array = df.to_numpy()
@@ -52,6 +61,12 @@ goal_start_ecm = np.copy(ecm_joint_values[0])
 goal_psm1_jaw = np.copy(psm1_jaw[0])
 goal_psm3_jaw = np.copy(psm3_jaw[0])
 
+goal_start_psm1.astype(np.float64)
+goal_start_psm3.astype(np.float64)
+goal_start_ecm.astype(np.float64)
+
+print(goal_start_psm1)
+
 print('Moving arms to initial starting position...')
 
 psm1.move_joint(goal_start_psm1, interpolate = True)
@@ -78,6 +93,10 @@ for i in range(len(delay)):
 	goal_psm1 = np.copy(psm1_joint_values[i + 1])
 	goal_psm3 = np.copy(psm3_joint_values[i + 1])
 	goal_ecm = np.copy(ecm_joint_values[i + 1])
+
+	goal_psm1.astype(np.float)
+	goal_psm3.astype(np.float)
+	goal_ecm.astype(np.float)
 
 	goal_psm1_jaw = np.copy(psm1_jaw[i + 1])
 	goal_psm3_jaw = np.copy(psm3_jaw[i + 1])
@@ -114,7 +133,7 @@ all_data = np.hstack((psm1_replayed_data, psm3_replayed_data, ecm_replayed_joint
 
 replayed_joint_values_Df = pd.DataFrame(all_data, columns = df_header)
 
-filepath = 'replayed_data_final.xlsx'
+filepath = 'replay_kareem_scale_1.xlsx'
 
 replayed_joint_values_Df.to_excel(filepath, index = False)
 
