@@ -23,23 +23,35 @@ if sys.version_info.major < 3:
 if __name__ == '__main__':
 
     rospy.init_node('topic_publisher')
-    rate = rospy.Rate(140)
+    rate = rospy.Rate(10)
+    
+    psm3 = dvrk.psm("PSM3")
 
     left_cam = camera.camera('left')
     right_cam = camera.camera('right')
 
+    orientation_Array = []
+    Vector_Array = []
     input("     Press Enter to start logging...")
 
-    def callback_dummy(data):
-
+    for i in range(20):
+        global orientation_Array, Vector_Array
+        print(i)
+        input("     Press Enter to save image...")
         image_left = left_cam.save_image()
         image_right = right_cam.save_image()
-
-
-    rospy.Subscriber('/dVRK/left/decklink/camera/camera_info', CameraInfo, callback_dummy, queue_size = 1, buff_size = 1000000)
+        psm3_orientation = np.copy(psm3.get_current_position().M)
+        psm3_vector = np.copy(psm3.get_current_position().p)
+        orientation_Array.append(psm3_orientation)
+        Vector_Array.append(psm3_vector)
 
     try:
         rospy.spin()
     except rospy.ROSInterruptException as e:
         print("Error Running ROS." + e)
         pass
+
+    print("Printing orientation_Array")
+    print(orientation_Array)
+    print("Printing Vector_Array")
+    print(Vector_Array)
