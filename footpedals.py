@@ -15,7 +15,7 @@ import sys
 
 class footpedal:
 
-	def __init__(self, robot_name, ros_namespace = '/dvrk/'):
+	def __init__(self, robot_name, ros_namespace = ''):
 		"""Constructor. Initializes data members. It requires just a robot name. ex. r = robot('PSM1')"""
 		self.__robot_name = robot_name
 		self.__ros_namespace = ros_namespace

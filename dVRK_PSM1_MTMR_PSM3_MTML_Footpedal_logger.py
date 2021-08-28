@@ -8,20 +8,21 @@ from cv_bridge import CvBridge, CvBridgeError
 from geometry_msgs.msg import TransformStamped
 from geometry_msgs.msg import PoseStamped
 from std_msgs.msg import String
-import cv2
+# import cv2
 import numpy as np
 import xlsxwriter
 import dvrk 
 import sys
 from scipy.spatial.transform import Rotation as R
 import os
-import arm_1_7
+import arm
 import camera
 import mtm
 import footpedals
 import time
 import json
-from tkinter import Tk, filedialog
+from Tkinter import Tk
+import tkFileDialog
 
 if sys.version_info.major < 3:
     input = raw_input
@@ -31,19 +32,19 @@ if __name__ == '__main__':
 	rospy.init_node('topic_publisher')
 	rate = rospy.Rate(140)
 
-	PSM1 = arm_1_7.robot('PSM1')
-	PSM3 = arm_1_7.robot('PSM3')
+	PSM1 = arm.robot('PSM1')
+	PSM3 = arm.robot('PSM3')
 	MTML = mtm.robot('MTML')
 	MTMR = mtm.robot('MTMR')
 	footpedal = footpedals.footpedal('footpedals')
-	ECM = arm_1_7.robot('ECM')
-	left_cam = camera.camera('left')
-	right_cam = camera.camera('right')
+	ECM = arm.robot('ECM')
+	# left_cam = camera.camera('left')
+	# right_cam = camera.camera('right')
 
 
 	root = Tk()
 	root.withdraw()
-	open_file = filedialog.askdirectory()
+	open_file = tkFileDialog.askdirectory()
 
 	print('The path specified is ' + open_file)
 
@@ -211,7 +212,7 @@ if __name__ == '__main__':
 		#Get PSM1 data
 		PSM1_jp = PSM1.get_current_joint_position()
 		PSM1_jaw_angle = PSM1.get_current_jaw_position()
-		
+		print(PSM1_jp)
 		if PSM1_jaw_angle[0] < 0:
 			PSM1_jaw_angle[0] = 0
 		PSM1_jaw_angle = [PSM1_jaw_angle[0]]
@@ -288,23 +289,23 @@ if __name__ == '__main__':
 			for col in range(len(all_data)):
 				worksheet.write(i, col, all_data[col])
 
-			image_saved_left = left_cam.get_image()
+			# image_saved_left = left_cam.get_image()
 
-			if len(image_saved_left) != 0:
-				left_cam_array.append(image_saved_left)
-				worksheet.write(i, 103, "left"+"_Camera" +"_" + str(i)+".png")
+			# if len(image_saved_left) != 0:
+			# 	left_cam_array.append(image_saved_left)
+			# 	worksheet.write(i, 103, "left"+"_Camera" +"_" + str(i)+".png")
 
-			image_saved_right = right_cam.get_image()
+			# image_saved_right = right_cam.get_image()
 
-			if len(image_saved_right) != 0:
-				right_cam_array.append(image_saved_right)
-				worksheet.write(i, 104, "right"+"_Camera" +"_" + str(i)+".png")
+			# if len(image_saved_right) != 0:
+			# 	right_cam_array.append(image_saved_right)
+			# 	worksheet.write(i, 104, "right"+"_Camera" +"_" + str(i)+".png")
 
 		else:
 			start_time = time
 		i = i + 1
 
-	rospy.Subscriber('/dvrk/PSM1/position_cartesian_current', PoseStamped, callback_dummy, queue_size = 1, buff_size = 1000000)
+	rospy.Subscriber('PSM1/measured_cp', PoseStamped, callback_dummy, queue_size = 1, buff_size = 1000000)
 
 	try:
 		rospy.spin()

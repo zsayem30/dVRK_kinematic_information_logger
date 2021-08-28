@@ -6,7 +6,7 @@ from sensor_msgs.msg import Image
 from sensor_msgs.msg import JointState
 from cv_bridge import CvBridge, CvBridgeError
 from std_msgs.msg import String
-from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import TransformStamped
 import cv2
 import numpy as np
 import dvrk 
@@ -15,7 +15,7 @@ from scipy.spatial.transform import Rotation as R
 
 class robot:
 
-	def __init__(self, robot_name, ros_namespace = '/dvrk/'):
+	def __init__(self, robot_name, ros_namespace = ''):
 		"""Constructor. Initializes data members. It requires just a robot name. ex. r = robot('PSM1')"""
 		self.__robot_name = robot_name
 		self.__ros_namespace = ros_namespace
@@ -36,9 +36,9 @@ class robot:
 		full_ros_namespace = self.__ros_namespace + self.__robot_name
 
 		#subscriber
-		rospy.Subscriber(full_ros_namespace + '/state_joint_current', JointState, self.current_joint_state_callback, queue_size = 1, buff_size = 1000000)
-		rospy.Subscriber(full_ros_namespace + '/state_gripper_current', JointState, self.current_jaw_state_callback, queue_size = 1, buff_size = 1000000)
-		rospy.Subscriber(full_ros_namespace + '/position_cartesian_current', PoseStamped, self.current_cartesian_position_callback, queue_size = 1, buff_size = 1000000)
+		rospy.Subscriber(full_ros_namespace + '/measured_js', JointState, self.current_joint_state_callback, queue_size = 1, buff_size = 1000000)
+		rospy.Subscriber(full_ros_namespace + '/gripper/measured_js', JointState, self.current_jaw_state_callback, queue_size = 1, buff_size = 1000000)
+		rospy.Subscriber(full_ros_namespace + '/measured_cp', TransformStamped, self.current_cartesian_position_callback, queue_size = 1, buff_size = 1000000)
 		#callback
 
 	def current_joint_state_callback(self, data):
@@ -52,8 +52,8 @@ class robot:
 
 	def current_cartesian_position_callback(self, data):
 
-		self.__position_cartesian_current = [data.pose.position.x, data.pose.position.y, data.pose.position.z]
-		self.__orientation_current = [data.pose.orientation.x, data.pose.orientation.y, data.pose.orientation.z, data.pose.orientation.w]
+		self.__position_cartesian_current = [data.transform.translation.x, data.transform.translation.y, data.transform.translation.z]
+		self.__orientation_current = [data.transform.rotation.x, data.transform.rotation.y, data.transform.rotation.z, data.transform.rotation.w]
 
 	def current_jaw_state_callback(self, data):
 
