@@ -31,7 +31,7 @@ class footpedal:
 		rospy.Subscriber(full_ros_namespace + '/camera', Joy, self.current_camera_state_callback, queue_size = 1, buff_size = 1000000)
 		rospy.Subscriber(full_ros_namespace + '/clutch', Joy, self.current_clutch_state_callback, queue_size = 1, buff_size = 1000000)
 		rospy.Subscriber(full_ros_namespace + '/coag', Joy, self.current_coag_state_callback, queue_size = 1, buff_size = 1000000)
-		rospy.Subscriber(full_ros_namespace + '/headsensor1', Joy, self.current_headsensor_state_callback, queue_size = 1, buff_size = 1000000)
+		rospy.Subscriber(full_ros_namespace + '/operatorpresent', Joy, self.current_headsensor_state_callback, queue_size = 1, buff_size = 1000000)
 		rospy.Subscriber(full_ros_namespace + '/cam_minus', Joy, self.current_cam_minus_state_callback, queue_size = 1, buff_size = 1000000)
 		rospy.Subscriber(full_ros_namespace + '/cam_plus', Joy, self.current_cam_plus_state_callback, queue_size = 1, buff_size = 1000000)
 
